@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کنترل خانه هوشمند</title>
+</head>
+<body>
+    <h1>کنترل خانه هوشمند</h1>
+    <ul id="device-list"></ul>
+
+    <script>
+        async function fetchDevices() {
+            let response = await fetch('/devices/');
+            let devices = await response.json();
+            let list = document.getElementById('device-list');
+            list.innerHTML = '';
+            
+            devices.forEach(device => {
+                let item = document.createElement('li');
+                item.innerHTML = `${device.name} - ${device.status ? 'روشن' : 'خاموش'} 
+                    <button onclick="toggleDevice(${device.id})">
+                        تغییر وضعیت
+                    </button>`;
+                list.appendChild(item);
+            });
+        }
+
+        async function toggleDevice(id) {
+            await fetch(`/toggle/${id}/`, { method: 'POST' });
+            fetchDevices();
+        }
+
+        fetchDevices();
+    </script>
+</body>
+</html>
